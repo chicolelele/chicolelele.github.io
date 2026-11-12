@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>云朵毛绒球捏捏乐 🧶</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            margin: 0;
+            padding: 32px 20px 42px;
+            background: radial-gradient(circle at top, #fff8f9 0%, #f3e7eb 100%);
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        .header {
+            text-align: center;
+            width: 100%;
+            z-index: 2;
+        }
+        h1 {
+            font-size: 21px;
+            color: #6b5359;
+            margin: 0 0 10px 0;
+            letter-spacing: 1px;
+        }
+        .badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 6px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #9c7a82;
+            box-shadow: 0 4px 12px rgba(170, 130, 140, 0.12);
+        }
+        #msg {
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            color: #d46a84;
+            font-weight: 500;
+            margin-top: 10px;
+            padding: 0 12px;
+            text-align: center;
+        }
+
+        /* 毛绒球舞台 */
+        .stage {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 呼吸蓬松动画 */
+        @keyframes fluffBreathe {
+            0%, 100% { transform: scale(1, 1) rotate(0deg); }
+            50% { transform: scale(1.03, 0.98) rotate(1deg); }
+        }
+
+        /* 毛绒球本体：利用多层阴影与虚化边缘打造毛茸茸质感 */
+        .fluff-ball {
+            width: 210px;
+            height: 210px;
+            border-radius: 50%;
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: fluffBreathe 3s infinite ease-in-out;
+            transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s, box-shadow 0.3s;
+        }
+
+        /* 4种毛绒主题配色 */
+        .theme-pink .fluff-ball {
+            background: radial-gradient(circle at 35% 30%, #ffd6e0, #ffacc5 70%, #f28aa8 100%);
+            box-shadow: 
+                0 0 18px 6px rgba(255, 172, 197, 0.65),
+                0 18px 32px rgba(214, 120, 148, 0.25),
+                inset 0 8px 18px rgba(255, 255, 255, 0.75),
+                inset 0 -12px 20px rgba(219, 112, 147, 0.45);
+        }
+        .theme-cream .fluff-ball {
+            background: radial-gradient(circle at 35% 30%, #ffffff, #f7eedc 70%, #e6d5b8 100%);
+            box-shadow: 
+                0 0 18px 6px rgba(245, 232, 208, 0.8),
+                0 18px 32px rgba(185, 165, 135, 0.22),
+                inset 0 8px 18px rgba(255, 255, 255, 0.9),
+                inset 0 -12px 20px rgba(196, 175, 145, 0.4);
+        }
+        .theme-matcha .fluff-ball {
+            background: radial-gradient(circle at 35% 30%, #e4f5d8, #bfe3a8 70%, #98c77d 100%);
+            box-shadow: 
+                0 0 18px 6px rgba(191, 227, 168, 0.65),
+                0 18px 32px rgba(130, 175, 105, 0.22),
+                inset 0 8px 18px rgba(255, 255, 255, 0.75),
+                inset 0 -12px 20px rgba(125, 168, 100, 0.4);
+        }
+        .theme-taro .fluff-ball {
+            background: radial-gradient(circle at 35% 30%, #efe3ff, #d5bdf7 70%, #b494e3 100%);
+            box-shadow: 
+                0 0 18px 6px rgba(213, 189, 247, 0.65),
+                0 18px 32px rgba(155, 125, 200, 0.22),
+                inset 0 8px 18px rgba(255, 255, 255, 0.75),
+                inset 0 -12px 20px rgba(145, 115, 190, 0.4);
+        }
+
+        /* 周围一圈小绒毛装饰 */
+        .fuzz-ring {
+            position: absolute;
+            width: 224px;
+            height: 224px;
+            border-radius: 50%;
+            border: 6px dotted rgba(255, 255, 255, 0.7);
+            pointer-events: none;
+            filter: blur(1px);
+        }
+
+        /* 按压揉扁形变 */
+        .fluff-ball.squished {
+            animation: none !important;
+            transform: scale(1.24, 0.76) translateY(14px) !important;
+        }
+
+        /* 立体大眼睛 */
+        .eyes-wrap {
+            display: flex;
+            gap: 24px;
+            z-index: 2;
+            margin-top: -10px;
+        }
+        .eye-white {
+            width: 38px;
+            height: 38px;
+            background: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.12), inset 0 -2px 4px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: all 0.1s;
+        }
+        .pupil {
+            width: 18px;
+            height: 18px;
+            background: #3d2e32;
+            border-radius: 50%;
+            position: relative;
+            transition: transform 0.08s ease-out;
+        }
+        .pupil::after {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: #ffffff;
+            border-radius: 50%;
+            position: absolute;
+            top: 3px;
+            left: 3px;
+        }
+
+        /* 被捏时的开心眯眯眼 */
+        .fluff-ball.squished .eye-white {
+            height: 8px;
+            border-radius: 10px;
+            margin-top: 15px;
+            background: #523d42;
+            box-shadow: none;
+        }
+        .fluff-ball.squished .pupil {
+            display: none;
+        }
+
+        /* 腮红与小嘴 */
+        .face-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 120px;
+            margin-top: 8px;
+        }
+        .blush {
+            width: 24px;
+            height: 12px;
+            background: rgba(255, 105, 135, 0.45);
+            border-radius: 50%;
+            filter: blur(2px);
+        }
+        .mouth {
+            font-size: 18px;
+            font-weight: bold;
+            color: #5c4349;
+        }
+
+        /* 飞散的小绒毛/爱心粒子 */
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            font-size: 20px;
+            animation: popFly 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            z-index: 5;
+        }
+        @keyframes popFly {
+            0% { opacity: 1; transform: translate(0, 0) scale(0.6) rotate(0deg); }
+            100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(1.2) rotate(180deg); }
+        }
+
+        /* 底部配色切换按钮 */
+        .palette {
+            display: flex;
+            gap: 14px;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 10px 18px;
+            border-radius: 30px;
+            box-shadow: 0 6px 20px rgba(150, 120, 130, 0.1);
+            z-index: 2;
+        }
+        .swatch {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: 3px solid #ffffff;
+            cursor: pointer;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+            transition: transform 0.2s;
+        }
+        .swatch.active {
+            transform: scale(1.2);
+            border-color: #ff85a1;
+        }
+        .s-pink { background: #ffacc5; }
+        .s-cream { background: #f5ebd6; }
+        .s-matcha { background: #bfe3a8; }
+        .s-taro { background: #d5bdf7; }
+    </style>
+</head>
+<body class="theme-pink" id="body">
+
+    <div class="header">
+        <h1>🧶 云朵毛绒球捏捏乐 🧶</h1>
+        <div class="badge">蓬松治愈值：<span id="count">0</span> %</div>
+        <div id="msg">摸一摸这团软乎乎的毛绒球吧~</div>
+    </div>
+
+    <div class="stage" id="stage">
+        <div class="fluff-ball" id="fluff">
+            <div class="fuzz-ring"></div>
+            <div class="eyes-wrap">
+                <div class="eye-white"><div class="pupil" id="p1"></div></div>
+                <div class="eye-white"><div class="pupil" id="p2"></div></div>
+            </div>
+            <div class="face-bottom">
+                <div class="blush"></div>
+                <div class="mouth" id="mouth">ᴗ</div>
+                <div class="blush"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="palette">
+        <div class="swatch s-pink active" onclick="setTheme('theme-pink', '草莓牛奶绒上线啦 🍓', this)"></div>
+        <div class="swatch s-cream" onclick="setTheme('theme-cream', '软绵绵香草云朵 ☁️', this)"></div>
+        <div class="swatch s-matcha" onclick="setTheme('theme-matcha', '清甜抹茶小毛团 🍵', this)"></div>
+        <div class="swatch s-taro" onclick="setTheme('theme-taro', '温柔香芋波波绒 🍇', this)"></div>
+    </div>
+
+    <script>
+        var count = 0;
+        var fluff = document.getElementById('fluff');
+        var stage = document.getElementById('stage');
+        var countEl = document.getElementById('count');
+        var msgEl = document.getElementById('msg');
+        var mouthEl = document.getElementById('mouth');
+        var p1 = document.getElementById('p1');
+        var p2 = document.getElementById('p2');
+
+        var sweetWords = [
+            "毛茸茸的怀抱最治愈啦~",
+            "噗叽！把不开心全部挤走！",
+            "好软好舒服，再多揉两下嘛~",
+            "今天的你也要像云朵一样轻松 ✨",
+            "坏情绪已经被毛绒球吸收掉啦！",
+            "贴贴！世界再吵，这里永远温柔~",
+            "治愈能量充满，元气满满出发吧！"
+        ];
+
+        var fluffItems = ['☁️', '🌸', '✨', '🧶', '💖', '🫧'];
+        var audioCtx = null;
+
+        // 合成软糯“噗叽”声
+        function playFluffSound() {
+            try {
